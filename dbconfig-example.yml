@@ -1,5 +1,5 @@
 
-dev:
+development:
     dialect: mysql
     datasource: USER:PASSWORD@tcp(MYSQL_IP:3306)/TABLE?parseTime=true
     dir: migrations/mysql

@@ -1,1 +1,3 @@
 # web-demo
+## Run test
+GO_ENV=unit-test go test ./...

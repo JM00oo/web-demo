@@ -13,7 +13,7 @@ func getPAToken(paID string) string {
 func Signup(username, password string) (string, error) {
 	userStore := model.NewUserStore()
 	_, err := userStore.GetByUsername(username)
-	if err == nil {
+	if err != nil {
 		token, err := userStore.Create(username, password)
 		return token, err
 	} else {
@@ -25,13 +25,14 @@ func Login(username, password string) (string, error) {
 	userStore := model.NewUserStore()
 	user, err := userStore.GetByUsername(username)
 	if err == nil {
-		return "", errors.New("Not found")
-	} else {
 		return user.Token, nil
+	} else {
+		return "", errors.New("Not found")
 	}
 
 }
-func Logout(token string) {
-	userStore := model.NewUserStore()
-	userStore.Logout(token)
-}
+
+// func Logout(token string) {
+// 	userStore := model.NewUserStore()
+// 	userStore.Logout(token)
+// }

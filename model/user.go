@@ -16,8 +16,8 @@ type User struct {
 // UserStore Interface
 type UserStore interface {
 	GetByUsername(username string) (User, error)
-	Logout(token string)
 	Create(username, password string) (string, error)
+	DeleteByUsername(username string) error
 }
 
 type userImpl struct{}
@@ -25,10 +25,6 @@ type userImpl struct{}
 // NewUserStore
 func NewUserStore() UserStore {
 	return &userImpl{}
-}
-func (impl *userImpl) Logout(token string) {
-	// TODO:
-	return
 }
 
 func (impl *userImpl) Create(username, passowrd string) (string, error) {
@@ -50,8 +46,12 @@ func (impl *userImpl) Create(username, passowrd string) (string, error) {
 }
 
 func (impl *userImpl) GetByUsername(username string) (User, error) {
-	// TODO
 	r := User{}
-	return r, nil
+	err := DB.Get(&r, "SELECT * FROM user WHERE username=?", username)
+	return r, err
 
+}
+func (impl *userImpl) DeleteByUsername(username string) error {
+	_, err := DB.Exec("DELETE FROM user WHERE username = ?", username)
+	return err
 }

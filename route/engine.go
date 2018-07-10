@@ -3,6 +3,7 @@ package route
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -13,7 +14,9 @@ import (
 func GetMainEngine() *gin.Engine {
 	r := gin.Default()
 	r.Use(gin.Recovery())
-	r.LoadHTMLGlob("template/*.html")
+	if os.Getenv("GO_ENV") != "unit-test" {
+		r.LoadHTMLGlob("template/*.html")
+	}
 	api := r.Group("/api")
 	api.POST("/signup", Signup)
 	api.POST("/login", Login)
@@ -96,11 +99,11 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"token": token})
 }
 
-func Logout(c *gin.Context) {
-	token := c.Request.Header.Get("token")
-	module.Logout(token)
-	c.JSON(http.StatusOK, nil)
-}
+// func Logout(c *gin.Context) {
+// 	token := c.Request.Header.Get("token")
+// 	module.Logout(token)
+// 	c.JSON(http.StatusOK, nil)
+// }
 
 /*
 func CreatePost(c *gin.Context) {
