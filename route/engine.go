@@ -21,13 +21,13 @@ func GetMainEngine() *gin.Engine {
 	api.POST("/signup", Signup)
 	api.POST("/login", Login)
 
-	// apiAuth := r.Group("/api")
+	apiAuth := r.Group("/api")
 	// apiAuth.Use(middleware.LoginRequired())
 	// apiAuth.POST("/logout", Logout)
-	// apiAuth.POST("/post", CreatePost)
+	apiAuth.POST("/post", CreatePost)
 	// apiAuth.POST("/comment", CreateComment)
 	// apiAuth.GET("/comment", GetComment)
-	// apiAuth.GET("/post", GetPost)
+	apiAuth.GET("/post", GetPost)
 
 	return r
 }
@@ -105,7 +105,6 @@ func Login(c *gin.Context) {
 // 	c.JSON(http.StatusOK, nil)
 // }
 
-/*
 func CreatePost(c *gin.Context) {
 	var req PostEntry
 	var err error
@@ -119,8 +118,9 @@ func CreatePost(c *gin.Context) {
 	}
 	title := req.Title
 	content := req.Content
+	c.Set("userID", "123")
 	userID := c.MustGet("userID")
-	err = module.CreatePost(title, content, userID)
+	err = module.CreatePost(title, content, userID.(string))
 	if err != nil {
 		fmt.Println("create post err", err)
 		c.JSON(http.StatusBadRequest, gin.H{"errorMsg": err.Error()})
@@ -130,10 +130,13 @@ func CreatePost(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, nil)
 }
+
 func GetPost(c *gin.Context) {
 	posts := module.GetPost()
 	c.JSON(http.StatusOK, posts)
 }
+
+/*
 
 func CreateComment(c *gin.Context) {
 	var req CommentEntry
