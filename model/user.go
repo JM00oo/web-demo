@@ -33,6 +33,7 @@ func (impl *userImpl) Create(username, passowrd string) (User, error) {
 	fmt.Println("prepString", prepString)
 	tx, err := DB.Beginx()
 	if err != nil {
+		fmt.Println("err in create user", err)
 		tx.Rollback()
 	}
 	stmt, err := tx.Prepare(prepString)

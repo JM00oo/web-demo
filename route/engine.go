@@ -131,7 +131,7 @@ func CreatePost(c *gin.Context) {
 
 func GetPost(c *gin.Context) {
 	posts := module.GetPost()
-	c.JSON(http.StatusOK, posts)
+	c.JSON(http.StatusOK, gin.H{"posts": posts})
 }
 
 func CreateComment(c *gin.Context) {
