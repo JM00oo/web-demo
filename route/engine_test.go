@@ -123,11 +123,11 @@ func TestPostAndComment(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, err, nil)
 	err = json.Unmarshal([]byte(w.Body.String()), &resp)
-	posts := resp["posts"].([]interface{})
+	posts := resp["posts"].([]interface{})[0].(map[string]interface{})
 
-	commentList := posts[0].(map[string]interface{})["comment"].([]interface{})
+	commentList := posts["comment"].([]interface{})
 	assert.Equal(t, 1, len(commentList))
-	newPostID := posts[0].(map[string]interface{})["id"].(string)
+	newPostID := posts["id"].(string)
 	assert.Equal(t, postID, newPostID)
 
 }
