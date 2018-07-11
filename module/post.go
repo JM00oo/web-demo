@@ -2,10 +2,10 @@ package module
 
 import "github.com/web-demo/model"
 
-func CreatePost(title, content, userID string) error {
+func CreatePost(title, content, userName string) (model.Post, error) {
 	postStore := model.NewPostStore()
-	err := postStore.Create(title, content, userID)
-	return err
+	post, err := postStore.Create(title, content, userName)
+	return post, err
 }
 
 func GetPost() []model.Post {

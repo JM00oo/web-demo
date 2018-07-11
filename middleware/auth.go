@@ -3,8 +3,10 @@ package middleware
 import (
 	// "database/sql"
 	// "fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/web-demo/model"
 )
 
 // LoginRequired : check tenant's session token in db
@@ -18,6 +20,14 @@ func LoginRequired() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		userStore := model.NewUserStore()
+		user, err := userStore.GetByToken(token)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"errorMsg": "unauthorized"})
+			c.Abort()
+			return
+		}
+		c.Set("userName", user.Username)
 		c.Next()
 	}
 }

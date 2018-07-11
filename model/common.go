@@ -85,17 +85,23 @@ func GetCreateSQLPreString(table string) string {
 	pv := reflect.ValueOf(p)
 	for i := 0; i < pv.Type().NumField(); i++ {
 		field := pv.Type().Field(i).Tag.Get("db")
-		if i == pv.Type().NumField()-1 {
-			r += field + ")values("
-		} else {
-			r += field + ", "
+		if field != "-" {
+
+			if i == pv.Type().NumField()-1 {
+				r += field + ")values("
+			} else {
+				r += field + ", "
+			}
 		}
 	}
 	for i := 0; i < pv.Type().NumField(); i++ {
-		if i == pv.Type().NumField()-1 {
-			r += "?)"
-		} else {
-			r += "?,"
+		field := pv.Type().Field(i).Tag.Get("db")
+		if field != "-" {
+			if i == pv.Type().NumField()-1 {
+				r += "?)"
+			} else {
+				r += "?,"
+			}
 		}
 	}
 

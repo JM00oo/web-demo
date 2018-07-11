@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"github.com/web-demo/middleware"
 	"github.com/web-demo/module"
 )
 
@@ -22,11 +23,9 @@ func GetMainEngine() *gin.Engine {
 	api.POST("/login", Login)
 
 	apiAuth := r.Group("/api")
-	// apiAuth.Use(middleware.LoginRequired())
-	// apiAuth.POST("/logout", Logout)
+	apiAuth.Use(middleware.LoginRequired())
 	apiAuth.POST("/post", CreatePost)
-	// apiAuth.POST("/comment", CreateComment)
-	// apiAuth.GET("/comment", GetComment)
+	apiAuth.POST("/comment", CreateComment)
 	apiAuth.GET("/post", GetPost)
 
 	return r
@@ -118,9 +117,8 @@ func CreatePost(c *gin.Context) {
 	}
 	title := req.Title
 	content := req.Content
-	c.Set("userID", "123")
-	userID := c.MustGet("userID")
-	err = module.CreatePost(title, content, userID.(string))
+	userName := c.MustGet("userName").(string)
+	post, err := module.CreatePost(title, content, userName)
 	if err != nil {
 		fmt.Println("create post err", err)
 		c.JSON(http.StatusBadRequest, gin.H{"errorMsg": err.Error()})
@@ -128,15 +126,13 @@ func CreatePost(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, nil)
+	c.JSON(http.StatusCreated, gin.H{"result": post})
 }
 
 func GetPost(c *gin.Context) {
 	posts := module.GetPost()
 	c.JSON(http.StatusOK, posts)
 }
-
-/*
 
 func CreateComment(c *gin.Context) {
 	var req CommentEntry
@@ -150,8 +146,17 @@ func CreateComment(c *gin.Context) {
 		return
 	}
 	comment := req.Comment
+
+	if len(comment) == 0 {
+		fmt.Println("create comment err", err)
+		c.JSON(http.StatusBadRequest, gin.H{"errorMsg": "empty comment"})
+		c.Abort()
+		return
+
+	}
 	postID := c.Query("postID")
-	err := module.CreateComment(comment, postID)
+	userName := c.MustGet("userName").(string)
+	err = module.CreateComment(comment, postID, userName)
 	if err != nil {
 		fmt.Println("create comment err", err)
 		c.JSON(http.StatusBadRequest, gin.H{"errorMsg": err.Error()})
@@ -159,8 +164,10 @@ func CreateComment(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, nil)
+	c.JSON(http.StatusCreated, "OK")
 }
+
+/*
 
 func GetComment(c *gin.Context) {
 	comments := module.GetComment()

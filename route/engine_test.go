@@ -13,59 +13,35 @@ import (
 	"github.com/web-demo/model"
 )
 
-func beforeTestPlatformAccount() error {
+func beforeTest() error {
 	model.DBInit()
 	return nil
 }
 
-func afterTestPlatformAccount(t *testing.T) {
+func afterTest() {
 	defer model.DB.Close()
 }
 
-// func TestSignupURL(t *testing.T) {
-// 	defer afterTestPlatformAccount(t)
-// 	err := beforeTestPlatformAccount()
-//
-// 	router := GetMainEngine()
-// 	username := "test-username" + model.GetCurrentTimeStampUnixTime()
-// 	password := "000000"signupResult
-// 	reqURL := "/api/signup"
-// 	data := map[string]string{
-// 		"email":               email,
-// 		"password":            password,
-// 		"panoCollectionLimit": "1",
-// 	}
-// 	body := model.GetFormData(data)
-// 	req, err := http.NewRequest("POST", reqURL, body)
-// 	req.Header.Add("istaging-api-key", iStagingAPIKey)
-// 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-// 	if err != nil {
-// 		fmt.Println("err in testPlatformAccountSignup: ", err)
-// 	}
-// 	w := httptest.NewRecorder()
-// 	router.ServeHTTP(w, req)
-//
-// 	fmt.Println(w.Body)
-// 	var signupResult gin.H
-// 	err = json.Unmarshal([]byte(w.Body.String()), &signupResult)
-// 	if err != nil {
-// 		fmt.Println("err in testPlatformAccountSignup unmarshall: ", err)
-// 	}
-// 	assert.Equal(t, http.StatusCreated, w.Code)
-// 	assert.Equal(t, err, nil)
-// 	assert.NotNil(t, signupResult["id"].(string))
-// 	assert.NotNil(t, signupResult["platformAccountToken"].(string))
-//
-// 	paStore := model.NewPlatformAccountStore()
-// 	err = paStore.DeleteByID(signupResult["id"].(string), true)
-// 	assert.Equal(t, err, nil)
-// }
+func beforeWithExistedUser() map[string]interface{} {
+	TEST_DATA := make(map[string]interface{})
+	userStore := model.NewUserStore()
+	user, _ := userStore.Create("postTestUser", "000000")
+	TEST_DATA["user"] = user
+	return TEST_DATA
+}
+func afterWithExistedUser(TEST_DATA map[string]interface{}) {
+	defer model.DB.Close()
+
+	userStore := model.NewUserStore()
+	user := TEST_DATA["user"].(model.User)
+	userStore.DeleteByUsername(user.Username)
+}
 
 func TestSignup(t *testing.T) {
-	defer afterTestPlatformAccount(t)
-	err := beforeTestPlatformAccount()
+	defer afterTest()
+	err := beforeTest()
 	router := GetMainEngine()
-	testUsername := "test-username"
+	testUsername := "test-username-2"
 	reqSignup := `{"username": "` + testUsername + `", "password":"123456"}`
 	fmt.Println("reqSignup", reqSignup)
 	bodyByte := []byte(reqSignup)
@@ -97,107 +73,27 @@ func TestSignup(t *testing.T) {
 }
 
 //
-// func TestPASignupNoPassword(t *testing.T) {
-// 	defer afterTestPlatformAccount(t)
-// 	err := beforeTestPlatformAccount()
+// func TestPostAndComment(t *testing.T) {
+// 	defer afterWithExistedUser()
+// 	TEST_DATA := beforeWithExistedUser()
 // 	router := GetMainEngine()
-// 	reqSignup := `{"email": "tenant_test_name"}`
-// 	bodyByte := []byte(reqSignup)
+// 	{
+// 	"title":"this is title",
+// 	"content":"this is content"
+// }
+// 	req := `{"title":"this is title", "content":"this is content"}`
+// 	bodyByte := []byte(req)
 //
-// 	req, err := http.NewRequest("POST", "/api/v1/platformAccount/signup", bytes.NewBuffer(bodyByte))
-// 	req.Header.Add("Content-Type", "application/json")
-// 	req.Header.Add("istaging-api-key", iStagingAPIKey)
+// 	req, err := http.NewRequest("POST", "/api/post", bytes.NewBuffer(bodyByte))
 // 	if err != nil {
-// 		fmt.Println("err in testPASignupNoPassword: ", err)
+// 		fmt.Println("err in test signup: ", err)
 // 	}
 // 	w := httptest.NewRecorder()
 // 	router.ServeHTTP(w, req)
 //
 // 	fmt.Println(w.Body)
-// 	assert.Equal(t, http.StatusBadRequest, w.Code)
-// }
+// 	assert.Equal(t, http.StatusCreated, w.Code)
+// 	assert.Equal(t, err, nil)
 //
-// func TestPASignupNoEmail(t *testing.T) {
-// 	defer afterTestPlatformAccount(t)
-// 	err := beforeTestPlatformAccount()
-// 	router := GetMainEngine()
-// 	reqSignup := `{"password": "123456"}`
-// 	bodyByte := []byte(reqSignup)
-//
-// 	req, err := http.NewRequest("POST", "/api/v1/platformAccount/signup", bytes.NewBuffer(bodyByte))
-// 	req.Header.Add("Content-Type", "application/json")
-// 	req.Header.Add("istaging-api-key", iStagingAPIKey)
-// 	if err != nil {
-// 		fmt.Println("err in testPASignupNoEmail: ", err)
-// 	}
-// 	w := httptest.NewRecorder()
-// 	router.ServeHTTP(w, req)
-//
-// 	fmt.Println(w.Body.String())
-// 	assert.Equal(t, http.StatusBadRequest, w.Code)
-// }
-//
-// func TestPASignupNoPanoLimit(t *testing.T) {
-// 	defer afterTestPlatformAccount(t)
-// 	err := beforeTestPlatformAccount()
-// 	router := GetMainEngine()
-// 	reqSignup := `{"password": "123456", "email": "tenant_test_name"}`
-// 	bodyByte := []byte(reqSignup)
-//
-// 	req, err := http.NewRequest("POST", "/api/v1/platformAccount/signup", bytes.NewBuffer(bodyByte))
-// 	req.Header.Add("Content-Type", "application/json")
-// 	req.Header.Add("istaging-api-key", iStagingAPIKey)
-// 	if err != nil {
-// 		fmt.Println("err in testPASignupNoEmail: ", err)
-// 	}
-// 	w := httptest.NewRecorder()
-// 	router.ServeHTTP(w, req)
-// 	var resp map[string]interface{}
-// 	json.Unmarshal([]byte(w.Body.String()), &resp)
-//
-// 	assert.Equal(t, http.StatusBadRequest, w.Code)
-// 	assert.Equal(t, "invalid format. no panoCollectionLimit.", resp["errorMsg"].(string))
-//
-// }
-//
-// func TestPASignupNoAPIKey(t *testing.T) {
-// 	defer afterTestPlatformAccount(t)
-// 	err := beforeTestPlatformAccount()
-// 	router := GetMainEngine()
-// 	reqSignup := model.PASignupEntry{"t-test-tenant-signup", "000000", 1}
-// 	marshalBody, _ := json.Marshal(reqSignup)
-// 	bodyByte := []byte(string(marshalBody))
-// 	req, err := http.NewRequest("POST", "/api/v1/platformAccount/signup", bytes.NewBuffer(bodyByte))
-// 	req.Header.Add("Content-Type", "application/json")
-// 	if err != nil {
-// 		fmt.Println("err in TestSignupNoAPIKey: ", err)
-// 	}
-// 	w := httptest.NewRecorder()
-// 	router.ServeHTTP(w, req)
-//
-// 	fmt.Println(w.Body)
-// 	assert.Equal(t, http.StatusUnauthorized, w.Code)
-//
-// }
-//
-// func TestPASignupWrongAPIKey(t *testing.T) {
-// 	defer afterTestPlatformAccount(t)
-// 	err := beforeTestPlatformAccount()
-// 	router := GetMainEngine()
-// 	reqSignup := model.PASignupEntry{"t-test-tenant-signup", "000000", 1}
-// 	marshalBody, _ := json.Marshal(reqSignup)
-// 	bodyByte := []byte(string(marshalBody))
-// 	req, err := http.NewRequest("POST", "/api/v1/platformAccount/signup", bytes.NewBuffer(bodyByte))
-// 	req.Header.Add("Content-Type", "application/json")
-// 	req.Header.Add("istaging-api-key", "NotExistKey")
-//
-// 	if err != nil {
-// 		fmt.Println("err in TestSignupNoAPIKey: ", err)
-// 	}
-// 	w := httptest.NewRecorder()
-// 	router.ServeHTTP(w, req)
-//
-// 	fmt.Println(w.Body)
-// 	assert.Equal(t, http.StatusUnauthorized, w.Code)
 //
 // }

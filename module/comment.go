@@ -1,12 +1,9 @@
 package module
 
-// func CreatePost(comment, postID string) error {
-// 	commentStore := model.CreateCommentStore()
-// 	err := commentStore.Create(comment, postID)
-// 	return err
-// }
-// func GetComment() []model.Comment {
-// 	commentStore := model.CreateCommentStore()
-// 	comments := commetStore.GetPost()
-// 	return comments
-// }
+import "github.com/web-demo/model"
+
+func CreateComment(comment, postID, ownerName string) error {
+	commentStore := model.NewCommentStore()
+	err := commentStore.Create(comment, postID, ownerName)
+	return err
+}

@@ -16,8 +16,9 @@ type User struct {
 // UserStore Interface
 type UserStore interface {
 	GetByUsername(username string) (User, error)
-	Create(username, password string) (string, error)
+	Create(username, password string) (User, error)
 	DeleteByUsername(username string) error
+	GetByToken(token string) (User, error)
 }
 
 type userImpl struct{}
@@ -27,7 +28,7 @@ func NewUserStore() UserStore {
 	return &userImpl{}
 }
 
-func (impl *userImpl) Create(username, passowrd string) (string, error) {
+func (impl *userImpl) Create(username, passowrd string) (User, error) {
 	prepString := GetCreateSQLPreString("user")
 	fmt.Println("prepString", prepString)
 	tx, err := DB.Beginx()
@@ -40,9 +41,10 @@ func (impl *userImpl) Create(username, passowrd string) (string, error) {
 	id := GenID()
 	timeNow := GetCurrentTimeStamp()
 	_, err = stmt.Exec(id, username, token, passowrd, timeNow)
-	fmt.Println("errrr", err)
 	tx.Commit()
-	return token, err
+
+	user, err := impl.GetByUsername(username)
+	return user, err
 }
 
 func (impl *userImpl) GetByUsername(username string) (User, error) {
@@ -54,4 +56,11 @@ func (impl *userImpl) GetByUsername(username string) (User, error) {
 func (impl *userImpl) DeleteByUsername(username string) error {
 	_, err := DB.Exec("DELETE FROM user WHERE username = ?", username)
 	return err
+}
+
+func (impl *userImpl) GetByToken(token string) (User, error) {
+	r := User{}
+	err := DB.Get(&r, "SELECT * FROM user WHERE token=?", token)
+	return r, err
+
 }

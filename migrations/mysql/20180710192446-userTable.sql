@@ -7,6 +7,7 @@ CREATE TABLE `user` (
   `username` varchar(255) COLLATE utf8mb4_bin NOT NULL,
   `password` varchar(255) COLLATE utf8mb4_bin NOT NULL,
   `created_at` Datetime COLLATE utf8mb4_bin NOT NULL,
+  UNIQUE (`username`),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC;
 

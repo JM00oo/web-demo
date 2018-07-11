@@ -6,28 +6,18 @@ import (
 )
 
 type Post struct {
+	Comment   []Comment `json:"comment,omitempty" db:"-" `
 	ID        string    `json:"id" db:"id"`
 	Title     string    `json:"title" db:"title"`
 	Content   string    `json:"content" binding:"required" db:"content"`
-	OwnerID   string    `json:"ownerID" db:"owner_id"`
+	OwnerName string    `json:"ownerName" db:"owner_name"`
 	CreatedAt time.Time `json:"createdAt" db:"created_at"`
 }
-
-// func CreatePost(title, content, userID string) error {
-// 	postStore := model.NewPostStore()
-// 	err := postStore.Create(title, content, userID)
-// 	return err
-// }
-// func GetPost() []model.Post {
-// 	postStore := model.NewPostStore()
-// 	posts := postStore.GetPost()
-// 	return posts
-// }
 
 // PostStore Interface
 type PostStore interface {
 	GetPost() []Post
-	Create(title, content, userID string) error
+	Create(title, content, userID string) (Post, error)
 }
 
 type postImpl struct{}
@@ -37,7 +27,7 @@ func NewPostStore() PostStore {
 	return &postImpl{}
 }
 
-func (impl *postImpl) Create(title, content, userID string) error {
+func (impl *postImpl) Create(title, content, userName string) (Post, error) {
 	prepString := GetCreateSQLPreString("post")
 	fmt.Println("prepString", prepString)
 	tx, err := DB.Beginx()
@@ -48,26 +38,26 @@ func (impl *postImpl) Create(title, content, userID string) error {
 	defer stmt.Close()
 	id := GenID()
 	timeNow := GetCurrentTimeStamp()
-	_, err = stmt.Exec(id, title, content, userID, timeNow)
-	fmt.Println("errrr", err)
+	_, err = stmt.Exec(id, title, content, userName, timeNow)
 	tx.Commit()
-	return err
+	post := impl.GetByID(id)
+	return post, err
+}
+func (impl *postImpl) GetByID(postID string) Post {
+
+	r := Post{}
+	DB.Get(&r, "SELECT * FROM post WHERE id=?", postID)
+	return r
+
 }
 
 func (impl *postImpl) GetPost() []Post {
 	r := []Post{}
 	DB.Select(&r, "SELECT * FROM post")
+	cStore := NewCommentStore()
+	for i := 0; i < len(r); i++ {
+		r[i].Comment = cStore.GetComment(r[i].ID)
+		fmt.Print("coment", r[i].Comment)
+	}
 	return r
 }
-
-//
-// func (impl *userImpl) GetByUsername(username string) (User, error) {
-// 	r := User{}
-// 	err := DB.Get(&r, "SELECT * FROM user WHERE username=?", username)
-// 	return r, err
-//
-// }
-// func (impl *userImpl) DeleteByUsername(username string) error {
-// 	_, err := DB.Exec("DELETE FROM user WHERE username = ?", username)
-// 	return err
-// }

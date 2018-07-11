@@ -26,3 +26,4 @@ $ GO_ENV=unit-test go test ./...
 ```
 $ go run main.go
 ```
+> Visit localhost:8080
