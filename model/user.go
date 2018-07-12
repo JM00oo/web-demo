@@ -19,6 +19,7 @@ type UserStore interface {
 	Create(username, password string) (User, error)
 	DeleteByUsername(username string) error
 	GetByToken(token string) (User, error)
+	GetByPasswordAndUsername(pw, username string) (User, error)
 }
 
 type userImpl struct{}
@@ -46,6 +47,13 @@ func (impl *userImpl) Create(username, passowrd string) (User, error) {
 
 	user, err := impl.GetByUsername(username)
 	return user, err
+}
+
+func (impl *userImpl) GetByPasswordAndUsername(pw, username string) (User, error) {
+	r := User{}
+	err := DB.Get(&r, "SELECT * FROM user WHERE password=? AND username=?", pw, username)
+	return r, err
+
 }
 
 func (impl *userImpl) GetByUsername(username string) (User, error) {

@@ -19,7 +19,7 @@ func Signup(username, password string) (string, error) {
 
 func Login(username, password string) (string, error) {
 	userStore := model.NewUserStore()
-	user, err := userStore.GetByUsername(username)
+	user, err := userStore.GetByPasswordAndUsername(password, username)
 	if err == nil {
 		return user.Token, nil
 	} else {

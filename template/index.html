@@ -72,6 +72,53 @@
         text-align: center;
         margin: 0 auto;
       }
+      /* The snackbar - position it at the bottom and in the middle of the screen */
+      #snackbar {
+          visibility: hidden; /* Hidden by default. Visible on click */
+          max-width: 250px; /* Set a default minimum width */
+          background-color: #f73859; /* Black background color */
+          color: #fff; /* White text color */
+          text-align: center; /* Centered text */
+          border-radius: 2px; /* Rounded borders */
+          padding: 16px; /* Padding */
+          z-index: 1; /* Add a z-index if needed */
+          left: 50%; /* Center the snackbar */
+          bottom: 30px; /* 30px from the bottom */
+          border-radius: 25px;
+          width: 100%;
+          margin: 15px auto;
+      }
+
+      /* Show the snackbar when clicking on a button (class added with JavaScript) */
+      #snackbar.show {
+          visibility: visible; /* Show the snackbar */
+
+      /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+      However, delay the fade out process for 2.5 seconds */
+          -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+          animation: fadein 0.5s, fadeout 0.5s 2.5s;
+      }
+
+      /* Animations to fade the snackbar in and out */
+      @-webkit-keyframes fadein {
+          from {bottom: 0; opacity: 0;}
+          to {bottom: 30px; opacity: 1;}
+      }
+
+      @keyframes fadein {
+          from {bottom: 0; opacity: 0;}
+          to {bottom: 30px; opacity: 1;}
+      }
+
+      @-webkit-keyframes fadeout {
+          from {bottom: 30px; opacity: 1;}
+          to {bottom: 0; opacity: 0;}
+      }
+
+      @keyframes fadeout {
+          from {bottom: 30px; opacity: 1;}
+          to {bottom: 0; opacity: 0;}
+      }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
@@ -79,6 +126,55 @@
         document.getElementById(id1).classList.add('notshow');
         document.getElementById(id2).classList.remove('notshow');
       }
+
+      function register(){
+        const username = document.getElementById("register-username").value;
+        const password = document.getElementById("register-password").value;
+        if (username.length == 0 || password.length == 0) {
+          showToast("username or password can't be empty")
+          return
+        }
+        $.ajax({
+          url: 'api/signup',
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({ username: username, password: password }),
+          headers: {
+            "Accept": "*/*",
+            "Content-Type": "application/json; charset=utf-8"
+          },
+          async:false
+        }).done(function (data){
+          const token = data.token
+          localStorage.setItem("token",token);
+          // localStorage.getItem(key); to get.
+          console.info("data", data)
+          $.ajax({
+            url: '/post',
+            type: 'GET',
+            headers: {
+              "token":token,
+              "Accept": "*/*",
+              "Content-Type": "application/json; charset=utf-8"
+            },
+            async:false
+          }).done(function (data) {
+            console.log("data", data)
+            // $("html" ).replaceWith( data )
+            document.open();
+            document.write(data);
+            document.close();
+          });
+          return false
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+          console.info(jqXHR)
+          console.info(textStatus)
+          console.info(errorThrown)
+          showToast("Duplicted username")
+        });;
+        return false;
+      }
+
       function login(){
         const username = document.getElementById("login-username").value;
         const password = document.getElementById("login-password").value;
@@ -92,17 +188,44 @@
             "Content-Type": "application/json; charset=utf-8"
           },
           async:false
-        }).done(function (){
-          console.info("ok")
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-          console.info(`jqXHR`, jqXHR.statusText)
-          console.info(`err:`, textStatus)
-          console.info(`errorThrown`, errorThrown)
-        }).always(function(data, t) {
-          window.location.href = "/";
-          console.info(`data`, data, t);
-        });;
+        }).done(function (data){
+          const token = data.token
+          localStorage.setItem("token",token);
+          // localStorage.getItem(key); to get.
+          console.info("data", data)
+          $.ajax({
+            url: '/post',
+            type: 'GET',
+            headers: {
+              "token":token,
+              "Accept": "*/*",
+              "Content-Type": "application/json; charset=utf-8"
+            },
+            async:false
+          }).done(function (data) {
+            console.log("data", data)
+            $("html" ).replaceWith( data )
+            document.open();
+            document.write(data);
+            document.close();
+          });
+          return false
+        }).fail(function () {
+          showToast("Wrong password")
+        }).always(function  () {
+          console.log('hi')
+        });
         return false;
+      }
+      function showToast (text) {
+        // Get the snackbar DIV
+        var x = document.getElementById("snackbar");
+        $('#snackbar').text(text);
+
+        // Add the "show" class to DIV
+        x.className = "show";
+        // After 3 seconds, remove the show class from DIV
+        setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
       }
     </script>
   </head>
@@ -114,16 +237,18 @@
             <form class="register-form notshow" id="register-form">
               <input id="register-username" type="text" placeholder="username"/>
               <input id="register-password" type="password" placeholder="password"/>
-              <button>Create</button>
+              <button type="button" onclick=register()>Create</button>
               <p class="message">Already registered? <a href='javascript:;' onclick="changeClass('register-form', 'login-form')">Sign In</a></p>
             </form>
             <form class="login-form" id="login-form">
               <input  id="login-username" type="text" placeholder="username"/>
               <input  id="login-password" type="password" placeholder="password"/>
-              <button onclick=login()>Login</button>
+              <button type="button" onclick=login()>Login</button>
               <p class="message"><a href='javascript:;' onclick="changeClass('login-form', 'register-form')">Create an account</a></p>
             </form>
           </div>
+          <!-- The actual snackbar -->
+          <div id="snackbar">Wrong password</div>
         </div>
       </div>
     </body>
