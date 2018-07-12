@@ -1,18 +1,107 @@
 <html>
   <head>
-    <title>Page 1</title>
+    <style>
+      body {
+        background: #fff; /* fallback for old browsers */
+        /* background: -webkit-linear-gradient(right, #42a1f4, #8DC26F);
+        background: -moz-linear-gradient(right, #42a1f4, #8DC26F);
+        background: -o-linear-gradient(right, #42a1f4, #8DC26F);
+        background: linear-gradient(to left, #42a1f4, #8DC26F); */
+        font-family: "Roboto", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      .post {
+        border: 2px;
+        box-sizing: border-box;
+        border-radius: 25px;
+        background: #f2f2f2;
+      }
+
+      a {
+        color: black;
+      }
+      .outer {
+        width: 100%;
+        text-align: center;
+        padding: 30px;
+        box-sizing: border-box;
+      }
+      .frame {
+        max-width: 800px;
+        width: 100%;
+        text-align: center;
+        margin: 0 auto;
+      }
+      .row {
+        width: 100%;
+        margin: 0 auto;
+        text-align: left;
+        /* padding: 0 15px; */
+      }
+      .block {
+        width: 40%;
+        /*float: left;*/
+        margin: 0 auto;
+        padding: 15 15 0 15px;
+        display: inline-block;
+        zoom: 1;
+      }
+      .post .comment {
+        text-align: right;
+        /* width:100%; */
+        padding: 15px;
+        margin: 0 auto;
+      }
+      .title {
+        font-weight: 900;
+        text-align: left;
+        padding: 15px;
+        font-size: 200%;
+      }
+      .author{
+        font-family: "Roboto", sans-serif;
+        text-align: left;
+        padding: 0 15px;
+        font-size: 120%;
+      }
+      .content {
+        font-family: "Roboto", sans-serif;
+        outline: 0;
+        background: #f2f2f2;
+        width: 100%;
+        border: 0;
+        margin: 0 auto;
+        padding: 15px;
+        box-sizing: border-box;
+        font-size: 14px;
+        border-radius: 25px;
+        text-align: left;
+        word-wrap: break-word;
+        font-style: italic
+      }
+
+    </style>
+    <script>
+    function clickComment (){
+      console.info('comment!')
+    }
+    </script>
   </head>
-  <body bgcolor=white>
+  <body>
+      <div class="outer">
+        <div class="frame">
+          <div class="post">
+            <!-- <div class="row"> -->
+              <div class="title"> Welcome! </div>
+              <div class="author">Author JM</div>
+              <div class=content>
+                <p> Content..................................................ccc..............................................
+              </div>
+              <div class="comment"> <a onclick=clickComment()>comment </a></div>
 
-    <table border="0" cellpadding="10">
-      <tr>
-        <td>
-          <h1>Page 1</h1>
-        </td>
-      </tr>
-    </table>
-
-    <p>This is the home page for the HelloWorld Web application. </p>
-    <p>To prove that they work, you can execute either of the following links:
-  </body>
+          </div>
+        </div>
+      </div>
+    </body>
 </html>

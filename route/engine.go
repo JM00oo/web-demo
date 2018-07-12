@@ -28,7 +28,7 @@ func GetMainEngine() *gin.Engine {
 	apiAuth.POST("/comment", CreateComment)
 	apiAuth.GET("/post", GetPost)
 
-	staticRoute.GET("/post", PostPage)
+	r.GET("/post", PostPage)
 
 	return r
 }
