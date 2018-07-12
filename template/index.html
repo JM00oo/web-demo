@@ -126,7 +126,31 @@
         document.getElementById(id1).classList.add('notshow');
         document.getElementById(id2).classList.remove('notshow');
       }
+      function goToPost(data){
+        const token = data.token
+        localStorage.setItem("token",token);
+        // localStorage.getItem(key); to get.
+        $(location).attr('href', '/post')
 
+        // window.location.href = "/post";
+
+        // $.ajax({
+        //   url: '/post',
+        //   type: 'GET',
+        //   headers: {
+        //     "token":token,
+        //     "Accept": "*/*",
+        //     "Content-Type": "application/json; charset=utf-8"
+        //   },
+        //   async:false
+        // }).done(function (data) {
+        //   console.log("data", data)
+        //   document.open();
+        //   document.write(data);
+        //   document.close();
+        // });
+        return false
+      }
       function register(){
         const username = document.getElementById("register-username").value;
         const password = document.getElementById("register-password").value;
@@ -144,31 +168,8 @@
             "Content-Type": "application/json; charset=utf-8"
           },
           async:false
-        }).done(function (data){
-          const token = data.token
-          localStorage.setItem("token",token);
-          // localStorage.getItem(key); to get.
-          console.info("data", data)
-          $.ajax({
-            url: '/post',
-            type: 'GET',
-            headers: {
-              "token":token,
-              "Accept": "*/*",
-              "Content-Type": "application/json; charset=utf-8"
-            },
-            async:false
-          }).done(function (data) {
-            console.log("data", data)
-            document.open();
-            document.write(data);
-            document.close();
-          });
-          return false
-        }).fail(function (jqXHR, textStatus, errorThrown) {
-          console.info(jqXHR)
-          console.info(textStatus)
-          console.info(errorThrown)
+        }).done(goToPost)
+        .fail(function (jqXHR, textStatus, errorThrown) {
           showToast("Duplicted username")
         });;
         return false;
@@ -187,28 +188,8 @@
             "Content-Type": "application/json; charset=utf-8"
           },
           async:false
-        }).done(function (data){
-          const token = data.token
-          localStorage.setItem("token",token);
-          // localStorage.getItem(key); to get.
-          console.info("data", data)
-          $.ajax({
-            url: '/post',
-            type: 'GET',
-            headers: {
-              "token":token,
-              "Accept": "*/*",
-              "Content-Type": "application/json; charset=utf-8"
-            },
-            async:false
-          }).done(function (data) {
-            console.log("data", data)
-            document.open();
-            document.write(data);
-            document.close();
-          });
-          return false
-        }).fail(function () {
+        }).done(goToPost)
+        .fail(function () {
           showToast("Wrong password")
         });
         return false;

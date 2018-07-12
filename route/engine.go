@@ -28,14 +28,12 @@ func GetMainEngine() *gin.Engine {
 	apiAuth.POST("/comment", CreateComment)
 	apiAuth.GET("/post", GetPost)
 
-	staticRoute := r.Group("/")
-	staticRoute.Use(middleware.LoginRequired())
-	staticRoute.GET("/post", ListPost)
+	staticRoute.GET("/post", PostPage)
 
 	return r
 }
-func ListPost(c *gin.Context) {
-	c.HTML(http.StatusOK, "page1.html", nil)
+func PostPage(c *gin.Context) {
+	c.HTML(http.StatusOK, "post.html", nil)
 }
 
 func MainPage(c *gin.Context) {
