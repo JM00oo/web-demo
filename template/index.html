@@ -160,7 +160,6 @@
             async:false
           }).done(function (data) {
             console.log("data", data)
-            // $("html" ).replaceWith( data )
             document.open();
             document.write(data);
             document.close();
@@ -204,7 +203,6 @@
             async:false
           }).done(function (data) {
             console.log("data", data)
-            $("html" ).replaceWith( data )
             document.open();
             document.write(data);
             document.close();
@@ -212,8 +210,6 @@
           return false
         }).fail(function () {
           showToast("Wrong password")
-        }).always(function  () {
-          console.log('hi')
         });
         return false;
       }
