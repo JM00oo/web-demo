@@ -12,12 +12,12 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
       }
-      /* .form .register-form {
-        display: none;
-      } */
-      .form .login-form {
+      .form .notshow {
         display: none;
       }
+      /* .form .login-form {
+        display: none;
+      } */
 
       .form input {
         font-family: "Roboto", sans-serif;
@@ -73,23 +73,55 @@
         margin: 0 auto;
       }
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+      function changeClass(id1, id2) {
+        document.getElementById(id1).classList.add('notshow');
+        document.getElementById(id2).classList.remove('notshow');
+      }
+      function login(){
+        const username = document.getElementById("login-username").value;
+        const password = document.getElementById("login-password").value;
+        $.ajax({
+          url: 'api/login',
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({ username: username, password: password }),
+          headers: {
+            "Accept": "*/*",
+            "Content-Type": "application/json; charset=utf-8"
+          },
+          async:false
+        }).done(function (){
+          console.info("ok")
+        }).fail(function (jqXHR, textStatus, errorThrown) {
+          console.info(`jqXHR`, jqXHR.statusText)
+          console.info(`err:`, textStatus)
+          console.info(`errorThrown`, errorThrown)
+        }).always(function(data, t) {
+          window.location.href = "/";
+          console.info(`data`, data, t);
+        });;
+        return false;
+      }
+    </script>
   </head>
   <body>
       <div class="outer">
         <div class="block">
           <img alt="" src="https://avatars0.githubusercontent.com/u/4215242?s=460&amp;v=4">
           <div class="form">
-            <form class="register-form">
-              <input type="text" placeholder="username"/>
-              <input type="password" placeholder="password"/>
+            <form class="register-form notshow" id="register-form">
+              <input id="register-username" type="text" placeholder="username"/>
+              <input id="register-password" type="password" placeholder="password"/>
               <button>Create</button>
-              <p class="message">Already registered? <a href="#">Sign In</a></p>
+              <p class="message">Already registered? <a href='javascript:;' onclick="changeClass('register-form', 'login-form')">Sign In</a></p>
             </form>
-            <form class="login-form">
-              <input  type="text" placeholder="username"/>
-              <input  type="password" placeholder="password"/>
-              <button>Login</button>
-              <p class="message"><a href="#">Create an account</a></p>
+            <form class="login-form" id="login-form">
+              <input  id="login-username" type="text" placeholder="username"/>
+              <input  id="login-password" type="password" placeholder="password"/>
+              <button onclick=login()>Login</button>
+              <p class="message"><a href='javascript:;' onclick="changeClass('login-form', 'register-form')">Create an account</a></p>
             </form>
           </div>
         </div>

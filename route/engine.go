@@ -84,10 +84,10 @@ func Login(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	emailStr := req.Username
+	usernameStr := req.Username
 	passwdStr := req.Password
 
-	token, err := module.Login(emailStr, passwdStr)
+	token, err := module.Login(usernameStr, passwdStr)
 	if err != nil {
 		fmt.Println("login err", err)
 		c.JSON(http.StatusBadRequest, gin.H{"errorMsg": err.Error()})
@@ -95,7 +95,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"token": token})
+	c.JSON(http.StatusOK, gin.H{"token": token})
 }
 
 // func Logout(c *gin.Context) {
