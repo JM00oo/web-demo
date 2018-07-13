@@ -6,7 +6,7 @@ import (
 )
 
 type Post struct {
-	Comment   []Comment `json:"comment,omitempty" db:"-" `
+	Comment   []Comment `json:"comment" db:"-" `
 	ID        string    `json:"id" db:"id"`
 	Title     string    `json:"title" db:"title"`
 	Content   string    `json:"content" binding:"required" db:"content"`

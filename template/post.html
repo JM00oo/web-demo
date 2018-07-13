@@ -1,5 +1,11 @@
 <html>
   <head>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
+
     <style>
       body {
         background: #fff; /* fallback for old browsers */
@@ -16,10 +22,11 @@
         box-sizing: border-box;
         border-radius: 25px;
         background: #f2f2f2;
+        margin-top: 20px;
       }
 
       a {
-        color: black;
+        color: blue;
       }
       .outer {
         width: 100%;
@@ -48,10 +55,12 @@
         zoom: 1;
       }
       .post .comment {
-        text-align: right;
+        text-align: left;
+        font-size: 200%;
         /* width:100%; */
         padding: 15px;
         margin: 0 auto;
+        /* color: blue; */
       }
       .title {
         font-weight: 900;
@@ -74,33 +83,168 @@
         margin: 0 auto;
         padding: 15px;
         box-sizing: border-box;
-        font-size: 14px;
         border-radius: 25px;
         text-align: left;
         word-wrap: break-word;
-        font-style: italic
+        font-style: italic;
+        font-size: 30px;
+      }
+      .nav>li>a {
+        position: relative;
+        display: block;
+        padding: 10px 15px;
+      }
+      a:focus, a:hover {
+        color: #23527c;
+        text-decoration: underline;
+      }
+      .nav-tabs>li.active>a {
+        color: #555;
+        cursor: default;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-bottom-color: transparent;
+        border-radius: 25px;
+      }
+      .comment-author {
+        font-size: 50%;
+      }
+    </style>
+
+    <script>
+      function clickComment (){
+        console.info('comment!')
+      }
+      function getCommentHtml(comment) {
+        var rVal =`<br>`
+        for (var i=0; i<comment.length; i++ ) {
+            var c=comment[i]
+            var date = new Date(c.createdAt).toDateString()
+
+            rVal += `
+                <div class="comment-author"> ${c.ownerName} <br> ${date}</div>
+                <div class="content"><p> ${c.comment}</div>
+                `
+        }
+        return rVal
       }
 
-    </style>
-    <script>
-    function clickComment (){
-      console.info('comment!')
-    }
+      function getHtmlData(data) {
+
+        const content = data.content
+        const createdAt = data.createdAt
+        const date = new Date(createdAt).toDateString()
+
+        const id = data.id
+        const author = data.ownerName
+        const title = data.title
+        const commentHtml = getCommentHtml(data.comment)
+
+        const rVal =`<div class="post" id=${id} ">
+                      <div class="title"> ${title} </div>
+                      <div class="author">${author} <br> ${date} </div>
+                      <div class=content><p> ${content}</div>
+                      <div class="comment">
+                        <div> Comment
+                          ${commentHtml}
+                        </div>
+                        <a href="#" class="btn btn-primary" role="button">Add Comment</a></div>
+                      </div>`
+
+        return rVal
+      }
+
+      function showPost(data) {
+        const htmlData = getHtmlData(data)
+        $('#frame').append(htmlData);
+
+      }
+      function listPost(data){
+        for (var i = 0; i< data.posts.length; i++) {
+            showPost(data.posts[i])
+        }
+      }
+
+      function showCreatePostDialog() {
+        var x = document.getElementById("createPostDialog");
+        x.show();
+        setInterval(function(){
+          let title = document.getElementById("newPostTitle").value;
+          let content = document.getElementById("newPostComment").value;
+          console.info(`title.length == 0 || content.length == 0`, title.length == 0 || content.length == 0)
+          if ( title.length == 0 || content.length == 0 ) {
+            $('#createPostBtn').attr('disabled','disabled');
+          } else {
+            $('#createPostBtn').removeAttr('disabled','disabled');
+          }
+        }, 1000)
+
+      }
+      function hideCreatePostDialog() {
+        var x = document.getElementById("createPostDialog");
+        x.close();
+      }
+      function createPost() {
+        var token = localStorage.getItem('token');
+        const title = document.getElementById("newPostTitle").value;
+        const content = document.getElementById("newPostComment").value;
+
+        $.ajax({
+          url: 'api/post',
+          type: 'POST',
+          data: JSON.stringify({ title: title, content: content }),
+          contentType: 'application/json',
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            "token":token
+          },
+          async:false
+        }).done(function (){
+          $(location).attr('href', '/post')
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+          $(location).attr('href', '/')
+          return false
+        });;
+      }
+      $( document ).ready(function() {
+        // $('#frame').append('<div class="post"><ul class="nav nav-tabs"><li role="presentation" class="active"><a href="#">Content</a></li><li role="presentation"><a href="#">Comment</a></li></ul>                  <!-- <div class="row"> --><div class="title"> Welcome! </div><div class="author">Author JM</div><div class=content><p> Content.......................................</div>                    <!-- <div class="comment"> <a onclick=clickComment()>comment </a></div> -->                    <div class="comment"><a href="#" class="btn btn-primary" role="button">Add Comment</a></div></div>');
+        // $('#frame').append('<div>hello</div>');
+        const token = localStorage.getItem('token');
+
+        $.ajax({
+          url: 'api/post',
+          type: 'GET',
+          contentType: 'application/json',
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            "token":token
+          },
+          async:false
+        }).done(listPost)
+        .fail(function (jqXHR, textStatus, errorThrown) {
+          $(location).attr('href', '/')
+          return false
+        });;
+        return false;
+      });
     </script>
+
   </head>
   <body>
-      <div class="outer">
-        <div class="frame">
-          <div class="post">
-            <!-- <div class="row"> -->
-              <div class="title"> Welcome! </div>
-              <div class="author">Author JM</div>
-              <div class=content>
-                <p> Content..................................................ccc..............................................
-              </div>
-              <div class="comment"> <a onclick=clickComment()>comment </a></div>
-
-          </div>
+        <div class="outer">
+        <div class="frame" id="frame">
+          <dialog id="createPostDialog">
+            <div>
+              Title:<br>
+              <input type="text" id="newPostTitle"><br>
+              Content:<br>
+              <input type="text" id="newPostComment">
+              <button href="#" class="btn btn-primary" role="button" onclick="createPost()" id="createPostBtn">Create</button>
+              <a href="#" class="btn btn-primary" role="button" onclick="hideCreatePostDialog()">Cancel</a>
+            </div>
+          </dialog>
+          <a href="#" class="btn btn-primary" role="button" onclick="showCreatePostDialog()">Create Post</a>
         </div>
       </div>
     </body>

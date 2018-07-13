@@ -120,7 +120,8 @@
           to {bottom: 0; opacity: 0;}
       }
     </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
     <script>
       function changeClass(id1, id2) {
         document.getElementById(id1).classList.add('notshow');
@@ -129,26 +130,8 @@
       function goToPost(data){
         const token = data.token
         localStorage.setItem("token",token);
-        // localStorage.getItem(key); to get.
         $(location).attr('href', '/post')
 
-        // window.location.href = "/post";
-
-        // $.ajax({
-        //   url: '/post',
-        //   type: 'GET',
-        //   headers: {
-        //     "token":token,
-        //     "Accept": "*/*",
-        //     "Content-Type": "application/json; charset=utf-8"
-        //   },
-        //   async:false
-        // }).done(function (data) {
-        //   console.log("data", data)
-        //   document.open();
-        //   document.write(data);
-        //   document.close();
-        // });
         return false
       }
       function register(){
