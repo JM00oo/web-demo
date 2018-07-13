@@ -21,5 +21,6 @@ func main() {
 	fmt.Printf("Version: %s, Build Date: %s, Git Summary: %s\n", Version, BuildDate, GitSummary)
 	r := route.GetMainEngine()
 	r.GET("/", route.MainPage)
+	r.Static("/.well-known/acme-challenge", "./.well-known/acme-challenge")
 	r.Run(":8080")
 }
