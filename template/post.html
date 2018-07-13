@@ -25,9 +25,7 @@
         margin-top: 20px;
       }
 
-      a {
-        color: blue;
-      }
+
       .outer {
         width: 100%;
         text-align: center;
@@ -43,8 +41,9 @@
       .row {
         width: 100%;
         margin: 0 auto;
-        text-align: left;
+        text-align: right;
         /* padding: 0 15px; */
+        display:inline-block;
       }
       .block {
         width: 40%;
@@ -56,17 +55,23 @@
       }
       .post .comment {
         text-align: left;
-        font-size: 200%;
+        font-size: 150%;
         /* width:100%; */
         padding: 15px;
         margin: 0 auto;
         /* color: blue; */
       }
       .title {
-        font-weight: 900;
+        font-family: Roboto,sans-serif;
+        line-height: 1.2;
+        font-weight: 400;
         text-align: left;
         padding: 15px;
-        font-size: 200%;
+        font-size: 300%;
+        margin: 0 0 16px;
+      }
+      .comment-title {
+        color: black;
       }
       .author{
         font-family: "Roboto", sans-serif;
@@ -86,8 +91,10 @@
         border-radius: 25px;
         text-align: left;
         word-wrap: break-word;
-        font-style: italic;
-        font-size: 30px;
+
+        font-size: 150%;
+        color: #5f6368;
+        line-height: 32px;
       }
       .nav>li>a {
         position: relative;
@@ -106,8 +113,39 @@
         border-bottom-color: transparent;
         border-radius: 25px;
       }
+      a.btn.btn-primary {
+        color: white;
+      }
+      a.no-underline {
+        text-decoration: none;
+        color: black;
+      }
       .comment-author {
         font-size: 50%;
+      }
+      a.no-underline:not(.nohover):hover {
+        color: black;
+      }
+      .post .comment p {
+        font-size: 75%;
+        color: #5f6368;
+        /* line-height: 32px; */
+
+      }
+      .btn-primary {
+        background-color:  #3cba54;
+        border-color:  #3cba54;
+      }
+      .btn-primary:hover {
+        background-color:  #3cba54;
+        border-color:  #3cba54;
+
+      }
+      .top-btn {
+        margin-right: 25px;
+      }
+      .row .top {
+        text-align: right;
       }
     </style>
 
@@ -120,7 +158,7 @@
       function getCommentHtml(comment) {
         var rVal =`<br>`
         comment.sort(function(a,b) {
-          return a.createdAt < b.createdAt
+          return a.createdAt > b.createdAt
         });
         for (var i=0; i<comment.length; i++ ) {
             var c=comment[i]
@@ -128,14 +166,17 @@
 
             rVal += `
                 <div class="comment-author"> ${c.ownerName} <br> ${date}</div>
-                <div class="content"><p> ${c.comment}</div>
+                <div class="comment"><p> ${c.comment}</div>
                 `
         }
         return rVal
       }
       function showCreateCommentDiag(postID) {
         gPostID = postID
+        var height = document.getElementById(postID).offsetHeight;
+        $("#createCommentDialog").css({'margin-top':height})
         var x = document.getElementById("createCommentDialog");
+
         x.show();
         setInterval(function(){
           let content = document.getElementById("newComment").value;
@@ -158,22 +199,22 @@
         const title = data.title
         const commentHtml = getCommentHtml(data.comment)
 
-        const rVal =`<div class="post" id=${id}>
-                      <div class="title"> <class="post" a href=#${id}> ${title} </div>
-                      <hr>
+        const rVal =`<div class="post" id=${id}> <a class="no-underline" href=#${id}>
+                      <div class="title"> <class="post"> ${title} </div>
                       <div class="author">${author} <br> ${date} </div>
                       <div class=content><p> ${content}</div>
+                      <hr>
                       <div class="comment">
-                        <div> Comment
-                        <hr>
+                        <div class="comment-title"> Comments
                           ${commentHtml}
                         </div>
-                        <a href="#" postID=${id} class="btn btn-primary" role="button" onclick=showCreateCommentDiag(this.attributes["postID"].value)>Add Comment</a></div>
+                        <div class="row" >
+                          <a postID=${id} class="btn btn-primary" role="button" onclick=showCreateCommentDiag(this.attributes["postID"].value)>Add Comment</a></div>
+                        </div>
                       </div>`
 
         return rVal
       }
-
       function showPost(data) {
         const htmlData = getHtmlData(data)
         $('#frame').append(htmlData);
@@ -190,7 +231,6 @@
             showPost(data.posts[i])
         }
       }
-
       function showCreatePostDialog() {
         var x = document.getElementById("createPostDialog");
         x.show();
@@ -210,7 +250,6 @@
         var x = document.getElementById(id);
         x.close();
       }
-
       function comment() {
         var token = localStorage.getItem('token');
         const comment = document.getElementById("newComment").value;
@@ -226,9 +265,8 @@
           },
           async:false
         }).done(function (){
-          // $(location).attr('href', `/post#${gPostID}`)
+          window.location.hash = `#${gPostID}`;
           location.reload();
-          window.location.href = `/post#${gPostID}`;
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
           $(location).attr('href', '/')
@@ -263,8 +301,6 @@
         });;
       }
       $( document ).ready(function() {
-        // $('#frame').append('<div class="post"><ul class="nav nav-tabs"><li role="presentation" class="active"><a href="#">Content</a></li><li role="presentation"><a href="#">Comment</a></li></ul>                  <!-- <div class="row"> --><div class="title"> Welcome! </div><div class="author">Author JM</div><div class=content><p> Content.......................................</div>                    <!-- <div class="comment"> <a onclick=clickComment()>comment </a></div> -->                    <div class="comment"><a href="#" class="btn btn-primary" role="button">Add Comment</a></div></div>');
-        // $('#frame').append('<div>hello</div>');
         const token = localStorage.getItem('token');
 
         $.ajax({
@@ -296,7 +332,7 @@
               Content:<br>
               <input type="text" id="newPostComment" maxlength="255">
               <button href="#" class="btn btn-primary" role="button" onclick="createPost()" id="createPostBtn" disabled="disabled">Create</button>
-              <a href="#" class="btn btn-primary" role="button" onclick="hideCreateDialog('createPostDialog')">Cancel</a>
+              <a class="btn btn-primary" role="button" onclick="hideCreateDialog('createPostDialog')">Cancel</a>
             </div>
           </dialog>
 
@@ -304,13 +340,14 @@
             <div>
               <input type="text" id="newComment" maxlength="255">
               <button href="#" class="btn btn-primary" role="button" onclick="comment()" id="createCommentBtn" disabled="disabled">Comment</button>
-              <a href="#" class="btn btn-primary" role="button" onclick="hideCreateDialog('createCommentDialog')">Cancel</a>
+              <a class="btn btn-primary" role="button" onclick="hideCreateDialog('createCommentDialog')">Cancel</a>
             </div>
           </dialog>
 
-          <a href="#" class="btn btn-primary" role="button" onclick="showCreatePostDialog()">Create Post</a>
-          <a href="#" class="btn btn-primary" role="button" onclick="logout()">Logout</a>
-
+          <div class="row top">
+            <a class="btn btn-primary top-btn" role="button" onclick="showCreatePostDialog()">Create Post</a>
+            <a class="btn btn-primary top-btn" role="button" onclick="logout()">Logout</a>
+          </div>
         </div>
       </div>
     </body>
