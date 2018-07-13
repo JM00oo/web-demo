@@ -20,7 +20,7 @@
       .post {
         border: 2px;
         box-sizing: border-box;
-        /* border-radius: 25px; */
+        border-radius: 25px;
         background: #f2f2f2;
         margin-top: 20px;
       }
@@ -60,15 +60,16 @@
         padding: 15px;
         margin: 0 auto;
         /* color: blue; */
+
       }
       .title {
         font-family: Roboto,sans-serif;
         line-height: 1.2;
         font-weight: 400;
         text-align: left;
-        padding: 15px;
+        padding: 15px 15px 0px 15px;
         font-size: 300%;
-        margin: 0 0 16px;
+        /* margin: 0 0 16px; */
       }
       .comment-title {
         color: black;
@@ -113,7 +114,7 @@
         border-bottom-color: transparent;
         border-radius: 25px;
       }
-      a.btn.btn-primary {
+      a.btn.btn-success {
         color: white;
       }
       a.no-underline {
@@ -132,21 +133,39 @@
         /* line-height: 32px; */
 
       }
-      .btn-primary {
-        background-color:  #3cba54;
-        border-color:  #3cba54;
-      }
-      .btn-primary:hover {
-        background-color:  #3cba54;
-        border-color:  #3cba54;
-
-      }
       .top-btn {
         margin-right: 25px;
       }
       .row .top {
         text-align: right;
       }
+      dialog {
+        width: 100%
+        border: 2px;
+        box-sizing: border-box;
+        border-radius: 25px;
+        background: #f2f2f2;
+        /* margin-top: 20px; */
+        margin: 0 auto;
+        text-align: left;
+      }
+      dialog input.c {
+        height: 100px;
+        width:100%;
+        /* line-height: 1em; // this probably doesn't matter */
+        /* border-radius: 25px; */
+        margin-bottom: 10px;
+      }
+      dialog .input-title {
+        width:100%;
+        /* border-radius: 25px; */
+        margin-bottom: 10px;
+      }
+      textarea {
+        width: 100%;
+        margin-bottom: 10px
+      }
+
     </style>
 
     <script>
@@ -209,7 +228,7 @@
                           ${commentHtml}
                         </div>
                         <div class="row" >
-                          <a postID=${id} class="btn btn-primary" role="button" onclick=showCreateCommentDiag(this.attributes["postID"].value)>Add Comment</a></div>
+                          <a postID=${id} class="btn btn-success" role="button" onclick=showCreateCommentDiag(this.attributes["postID"].value)>Add Comment</a></div>
                         </div>
                       </div>`
 
@@ -325,28 +344,31 @@
   <body>
         <div class="outer">
         <div class="frame" id="frame">
-          <dialog id="createPostDialog">
-            <div>
+
+          <dialog id="createPostDialog" class="dialog">
+              <div>
               Title:<br>
-              <input type="text" id="newPostTitle" maxlength="16"><br>
+              <input class="input-title" type="text" id="newPostTitle" maxlength="16"><br>
               Content:<br>
-              <input type="text" id="newPostComment" maxlength="255">
-              <button href="#" class="btn btn-primary" role="button" onclick="createPost()" id="createPostBtn" disabled="disabled">Create</button>
-              <a class="btn btn-primary" role="button" onclick="hideCreateDialog('createPostDialog')">Cancel</a>
+              <textarea rows="4" class="c" id="newPostComment" maxlength="255"></textarea>
+              <div class="row">
+                <button href="#" class="btn btn-success" role="button" onclick="createPost()" id="createPostBtn" disabled="disabled">Create</button>
+                <button class="btn btn-warning" role="button" onclick="hideCreateDialog('createPostDialog')">Cancel</button>
+              </div>
             </div>
           </dialog>
 
-          <dialog id="createCommentDialog">
+          <dialog id="createCommentDialog" class="dialog">
             <div>
-              <input type="text" id="newComment" maxlength="255">
-              <button href="#" class="btn btn-primary" role="button" onclick="comment()" id="createCommentBtn" disabled="disabled">Comment</button>
-              <a class="btn btn-primary" role="button" onclick="hideCreateDialog('createCommentDialog')">Cancel</a>
+              <textarea rows="4" class="c" type="text" id="newComment" maxlength="2"></textarea>
+              <button href="#" class="btn btn-success" role="button" onclick="comment()" id="createCommentBtn" disabled="disabled">Comment</button>
+              <a class="btn btn-warning" role="button" onclick="hideCreateDialog('createCommentDialog')">Cancel</a>
             </div>
           </dialog>
 
           <div class="row top">
-            <a class="btn btn-primary top-btn" role="button" onclick="showCreatePostDialog()">Create Post</a>
-            <a class="btn btn-primary top-btn" role="button" onclick="logout()">Logout</a>
+            <a class="btn btn-success top-btn" role="button" onclick="showCreatePostDialog()">Create Post</a>
+            <a class="btn btn-success top-btn" role="button" onclick="logout()">Logout</a>
           </div>
         </div>
       </div>
