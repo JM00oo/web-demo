@@ -17,9 +17,7 @@ var GitSummary string
 var Version string
 
 func main() {
-	fmt.Println("gooooo")
 	model.DBInit()
-	fmt.Println("gooooo")
 	fmt.Printf("Version: %s, Build Date: %s, Git Summary: %s\n", Version, BuildDate, GitSummary)
 	r := route.GetMainEngine()
 	r.GET("/", route.MainPage)

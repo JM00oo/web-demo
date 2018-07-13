@@ -20,7 +20,7 @@
       .post {
         border: 2px;
         box-sizing: border-box;
-        border-radius: 25px;
+        /* border-radius: 25px; */
         background: #f2f2f2;
         margin-top: 20px;
       }
@@ -112,14 +112,19 @@
     </style>
 
     <script>
-      function clickComment (){
-        console.info('comment!')
+      var gPostID;
+      function formateDate(date) {
+        d = new Date(date)
+        return d.toLocaleDateString() + ' ' + d.toLocaleTimeString()
       }
       function getCommentHtml(comment) {
         var rVal =`<br>`
+        comment.sort(function(a,b) {
+          return a.createdAt < b.createdAt
+        });
         for (var i=0; i<comment.length; i++ ) {
             var c=comment[i]
-            var date = new Date(c.createdAt).toDateString()
+            var date = formateDate(c.createdAt)
 
             rVal += `
                 <div class="comment-author"> ${c.ownerName} <br> ${date}</div>
@@ -128,27 +133,42 @@
         }
         return rVal
       }
+      function showCreateCommentDiag(postID) {
+        gPostID = postID
+        var x = document.getElementById("createCommentDialog");
+        x.show();
+        setInterval(function(){
+          let content = document.getElementById("newComment").value;
+          if ( content.length == 0) {
+            $('#createCommentBtn').attr('disabled','disabled');
+          } else {
+            $('#createCommentBtn').removeAttr('disabled','disabled');
+          }
+        }, 300)
 
+      }
       function getHtmlData(data) {
 
         const content = data.content
         const createdAt = data.createdAt
-        const date = new Date(createdAt).toDateString()
+        const date = formateDate(createdAt)
 
         const id = data.id
         const author = data.ownerName
         const title = data.title
         const commentHtml = getCommentHtml(data.comment)
 
-        const rVal =`<div class="post" id=${id} ">
-                      <div class="title"> ${title} </div>
+        const rVal =`<div class="post" id=${id}>
+                      <div class="title"> <class="post" a href=#${id}> ${title} </div>
+                      <hr>
                       <div class="author">${author} <br> ${date} </div>
                       <div class=content><p> ${content}</div>
                       <div class="comment">
                         <div> Comment
+                        <hr>
                           ${commentHtml}
                         </div>
-                        <a href="#" class="btn btn-primary" role="button">Add Comment</a></div>
+                        <a href="#" postID=${id} class="btn btn-primary" role="button" onclick=showCreateCommentDiag(this.attributes["postID"].value)>Add Comment</a></div>
                       </div>`
 
         return rVal
@@ -160,6 +180,12 @@
 
       }
       function listPost(data){
+        data.posts.sort(
+          function(a,b) {
+            return a.createdAt < b.createdAt
+          }
+        );
+        console.info(`data.posts`, data.posts)
         for (var i = 0; i< data.posts.length; i++) {
             showPost(data.posts[i])
         }
@@ -177,12 +203,41 @@
           } else {
             $('#createPostBtn').removeAttr('disabled','disabled');
           }
-        }, 1000)
+        }, 300)
 
       }
-      function hideCreatePostDialog() {
-        var x = document.getElementById("createPostDialog");
+      function hideCreateDialog(id) {
+        var x = document.getElementById(id);
         x.close();
+      }
+
+      function comment() {
+        var token = localStorage.getItem('token');
+        const comment = document.getElementById("newComment").value;
+
+        $.ajax({
+          url: `api/comment?postID=${gPostID}`,
+          type: 'POST',
+          data: JSON.stringify({ comment: comment }),
+          contentType: 'application/json',
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            "token":token
+          },
+          async:false
+        }).done(function (){
+          // $(location).attr('href', `/post#${gPostID}`)
+          location.reload();
+          window.location.href = `/post#${gPostID}`;
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+          $(location).attr('href', '/')
+          return false
+        });;
+      }
+      function logout() {
+        localStorage.removeItem('token');
+        $(location).attr('href', '/')
       }
       function createPost() {
         var token = localStorage.getItem('token');
@@ -237,14 +292,25 @@
           <dialog id="createPostDialog">
             <div>
               Title:<br>
-              <input type="text" id="newPostTitle"><br>
+              <input type="text" id="newPostTitle" maxlength="16"><br>
               Content:<br>
-              <input type="text" id="newPostComment">
-              <button href="#" class="btn btn-primary" role="button" onclick="createPost()" id="createPostBtn">Create</button>
-              <a href="#" class="btn btn-primary" role="button" onclick="hideCreatePostDialog()">Cancel</a>
+              <input type="text" id="newPostComment" maxlength="255">
+              <button href="#" class="btn btn-primary" role="button" onclick="createPost()" id="createPostBtn" disabled="disabled">Create</button>
+              <a href="#" class="btn btn-primary" role="button" onclick="hideCreateDialog('createPostDialog')">Cancel</a>
             </div>
           </dialog>
+
+          <dialog id="createCommentDialog">
+            <div>
+              <input type="text" id="newComment" maxlength="255">
+              <button href="#" class="btn btn-primary" role="button" onclick="comment()" id="createCommentBtn" disabled="disabled">Comment</button>
+              <a href="#" class="btn btn-primary" role="button" onclick="hideCreateDialog('createCommentDialog')">Cancel</a>
+            </div>
+          </dialog>
+
           <a href="#" class="btn btn-primary" role="button" onclick="showCreatePostDialog()">Create Post</a>
+          <a href="#" class="btn btn-primary" role="button" onclick="logout()">Logout</a>
+
         </div>
       </div>
     </body>
