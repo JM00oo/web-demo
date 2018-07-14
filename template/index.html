@@ -187,6 +187,17 @@
         // After 3 seconds, remove the show class from DIV
         setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
       }
+      $( document ).ready(function() {
+        setInterval(function(){
+          let password = document.getElementById("register-password").value
+          let confirmPassword = document.getElementById("register-confirm-password").value
+          if ( password.length == 0 || password != confirmPassword) {
+            $('#register-btn').attr('disabled','disabled');
+          } else {
+            $('#register-btn').removeAttr('disabled','disabled');
+          }
+        }, 300)
+      });
     </script>
   </head>
   <body>
@@ -197,7 +208,8 @@
             <form class="register-form notshow" id="register-form">
               <input id="register-username" type="text" placeholder="username"/>
               <input id="register-password" type="password" placeholder="password"/>
-              <button type="button" onclick=register()>Create</button>
+              <input id="register-confirm-password" type="password" placeholder="confirm password"/>
+              <button type="button" onclick=register() id="register-btn" disabled="disabled">Create</button>
               <p class="message">Already registered? <a href='javascript:;' onclick="changeClass('register-form', 'login-form')">Sign In</a></p>
             </form>
             <form class="login-form" id="login-form">
