@@ -225,7 +225,7 @@
         const title = data.title
         const commentHtml = getCommentHtml(data.comment)
 
-        const rVal =`<div class="post" id=${id}> 
+        const rVal =`<div class="post" id=${id}>
                       <div class="title"> <class="post"> ${title} </div>
                       <div class="author">${author} <br> ${date} </div>
                       <div class=content><p> ${content}</div>
@@ -374,7 +374,7 @@
                </div>
                <div class="modal-footer">
                  <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="hideCreateDialog('createPostDialog')" >Close</button>
-                 <button type="button" class="btn btn-primary" onclick="createPost()" id="createPostBtn">Save changes</button>
+                 <button type="button" class="btn btn-primary" onclick="createPost()" id="createPostBtn"> Post</button>
                </div>
              </div>
            </div>
@@ -396,7 +396,7 @@
                </div>
                <div class="modal-footer">
                  <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="hideCreateDialog('createCommentDialog')" >Close</button>
-                 <button type="button" class="btn btn-primary" onclick="comment()" id="createCommentBtn">Save changes</button>
+                 <button type="button" class="btn btn-primary" onclick="comment()" id="createCommentBtn">Comment</button>
                </div>
              </div>
            </div>
