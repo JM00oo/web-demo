@@ -160,10 +160,16 @@
         width:100%;
         /* border-radius: 25px; */
         margin-bottom: 10px;
+
+      }
+      dialog {
+        display: none;
+        z-index: 999;
       }
       textarea {
         width: 100%;
-        margin-bottom: 10px
+        margin-bottom: 10px;
+        /* margin: 0 auto; */
       }
 
     </style>
@@ -196,7 +202,9 @@
         $("#createCommentDialog").css({'margin-top':height})
         var x = document.getElementById("createCommentDialog");
 
-        x.show();
+        // x.show();
+        $("#createCommentDialog").css('display','block');
+
         setInterval(function(){
           let content = document.getElementById("newComment").value;
           if ( content.length == 0) {
@@ -252,7 +260,8 @@
       }
       function showCreatePostDialog() {
         var x = document.getElementById("createPostDialog");
-        x.show();
+        // x.show();
+        $("#createPostDialog").css('display','block');
         setInterval(function(){
           let title = document.getElementById("newPostTitle").value;
           let content = document.getElementById("newPostComment").value;
@@ -267,7 +276,8 @@
       }
       function hideCreateDialog(id) {
         var x = document.getElementById(id);
-        x.close();
+        // x.close();
+        $(`#${id}`).css("display","none")
       }
       function comment() {
         var token = localStorage.getItem('token');
@@ -348,7 +358,7 @@
           <dialog id="createPostDialog" class="dialog">
               <div>
               Title:<br>
-              <input class="input-title" type="text" id="newPostTitle" maxlength="16"><br>
+              <input class="input-title" type="text" id="newPostTitle" maxlength="16"></textarea><br>
               Content:<br>
               <textarea rows="4" class="c" id="newPostComment" maxlength="255"></textarea>
               <div class="row">
@@ -360,7 +370,7 @@
 
           <dialog id="createCommentDialog" class="dialog">
             <div>
-              <textarea rows="4" class="c" type="text" id="newComment" maxlength="2"></textarea>
+              <textarea rows="4" class="c" type="text" id="newComment" maxlength="255"></textarea>
               <button href="#" class="btn btn-success" role="button" onclick="comment()" id="createCommentBtn" disabled="disabled">Comment</button>
               <a class="btn btn-warning" role="button" onclick="hideCreateDialog('createCommentDialog')">Cancel</a>
             </div>
