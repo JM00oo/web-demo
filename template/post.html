@@ -356,19 +356,6 @@
         <div class="outer">
         <div class="frame" id="frame">
 
-          <!-- <dialog  class="dialog"  >
-            <div>
-              Title:<br>
-              <input class="input-title" type="text" id="newPostTitle" maxlength="16"></textarea><br>
-              Content:<br>
-              <textarea rows="4" class="c" id="newPostComment" maxlength="255"></textarea>
-              <div class="row">
-                <button href="#" class="btn btn-success" role="button" onclick="createPost()" id="createPostBtn" disabled="disabled">Create</button>
-                <button class="btn btn-warning" role="button" onclick="hideCreateDialog('createPostDialog')">Cancel</button>
-              </div>
-            </div>
-          </dialog> -->
-
           <!-- Modal -->
          <div class="modal"  id="createPostDialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
            <div class="modal-dialog" role="document">
@@ -389,7 +376,7 @@
                </div>
                <div class="modal-footer">
                  <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="hideCreateDialog('createPostDialog')" >Close</button>
-                 <button type="button" class="btn btn-primary" onclick="createPost()">Save changes</button>
+                 <button type="button" class="btn btn-primary" onclick="createPost()" id="createPostBtn">Save changes</button>
                </div>
              </div>
            </div>
@@ -411,7 +398,7 @@
                </div>
                <div class="modal-footer">
                  <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="hideCreateDialog('createCommentDialog')" >Close</button>
-                 <button type="button" class="btn btn-primary" onclick="comment()">Save changes</button>
+                 <button type="button" class="btn btn-primary" onclick="comment()" id="createCommentBtn">Save changes</button>
                </div>
              </div>
            </div>
