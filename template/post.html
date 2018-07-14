@@ -173,6 +173,54 @@
         /* margin: 0 auto; */
       }
 
+      /* The snackbar - position it at the bottom and in the middle of the screen */
+      #snackbar {
+          visibility: hidden; /* Hidden by default. Visible on click */
+          max-width: 250px; /* Set a default minimum width */
+          background-color: #f73859; /* Black background color */
+          color: #fff; /* White text color */
+          text-align: center; /* Centered text */
+          border-radius: 2px; /* Rounded borders */
+          padding: 16px; /* Padding */
+          z-index: 1; /* Add a z-index if needed */
+          left: 50%; /* Center the snackbar */
+          bottom: 30px; /* 30px from the bottom */
+          border-radius: 25px;
+          width: 100%;
+          margin: 15px auto;
+      }
+
+      /* Show the snackbar when clicking on a button (class added with JavaScript) */
+      #snackbar.show {
+          visibility: visible; /* Show the snackbar */
+
+      /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+      However, delay the fade out process for 2.5 seconds */
+          -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+          animation: fadein 0.5s, fadeout 0.5s 2.5s;
+      }
+
+      /* Animations to fade the snackbar in and out */
+      @-webkit-keyframes fadein {
+          from {bottom: 0; opacity: 0;}
+          to {bottom: 30px; opacity: 1;}
+      }
+
+      @keyframes fadein {
+          from {bottom: 0; opacity: 0;}
+          to {bottom: 30px; opacity: 1;}
+      }
+
+      @-webkit-keyframes fadeout {
+          from {bottom: 30px; opacity: 1;}
+          to {bottom: 0; opacity: 0;}
+      }
+
+      @keyframes fadeout {
+          from {bottom: 30px; opacity: 1;}
+          to {bottom: 0; opacity: 0;}
+      }
+
     </style>
 
     <script>
@@ -297,13 +345,24 @@
           location.reload();
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
-          $(location).attr('href', '/')
+          hideCreateDialog('createCommentDialog')
+          showToast('Opps, there is something wrong...')
           return false
         });;
       }
       function logout() {
         localStorage.removeItem('token');
         $(location).attr('href', '/')
+      }
+      function showToast (text) {
+        // Get the snackbar DIV
+        var x = document.getElementById("snackbar");
+        $('#snackbar').text(text);
+
+        // Add the "show" class to DIV
+        x.className = "show";
+        // After 3 seconds, remove the show class from DIV
+        setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
       }
       function createPost() {
         var token = localStorage.getItem('token');
@@ -324,7 +383,9 @@
           $(location).attr('href', '/post')
         })
         .fail(function (jqXHR, textStatus, errorThrown) {
-          $(location).attr('href', '/')
+          // $(location).attr('href', '/')
+          hideCreateDialog('createPostDialog')
+          showToast('Opps, there is something wrong...')
           return false
         });;
       }
@@ -373,7 +434,7 @@
                 </div>
                </div>
                <div class="modal-footer">
-                 <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="hideCreateDialog('createPostDialog')" >Close</button>
+                 <button type="button" class="btn btn-warning" data-dismiss="modal" onclick="hideCreateDialog('createPostDialog')" >Close</button>
                  <button type="button" class="btn btn-primary" onclick="createPost()" id="createPostBtn"> Post</button>
                </div>
              </div>
@@ -395,7 +456,7 @@
                 </div>
                </div>
                <div class="modal-footer">
-                 <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="hideCreateDialog('createCommentDialog')" >Close</button>
+                 <button type="button" class="btn btn-warning" data-dismiss="modal" onclick="hideCreateDialog('createCommentDialog')" >Close</button>
                  <button type="button" class="btn btn-primary" onclick="comment()" id="createCommentBtn">Comment</button>
                </div>
              </div>
@@ -406,6 +467,7 @@
             <a class="btn btn-success top-btn" role="button" onclick="showCreatePostDialog()">Create Post</a>
             <a class="btn btn-success top-btn" role="button" onclick="logout()">Logout</a>
           </div>
+          <div id="snackbar">Opps, there is something wrong...</div>
         </div>
       </div>
     </body>
