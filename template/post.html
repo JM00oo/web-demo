@@ -148,6 +148,9 @@
         /* margin-top: 20px; */
         margin: 0 auto;
         text-align: left;
+        display: none;
+        /* position: fixed; */
+        position:absolute;
       }
       dialog input.c {
         height: 100px;
@@ -156,15 +159,13 @@
         /* border-radius: 25px; */
         margin-bottom: 10px;
       }
-      dialog .input-title {
+      .modal-body .input-title {
         width:100%;
         /* border-radius: 25px; */
         margin-bottom: 10px;
-
       }
-      dialog {
-        display: none;
-        z-index: 999;
+      .modal-body {
+        text-align: left;
       }
       textarea {
         width: 100%;
@@ -355,8 +356,8 @@
         <div class="outer">
         <div class="frame" id="frame">
 
-          <dialog id="createPostDialog" class="dialog">
-              <div>
+          <!-- <dialog  class="dialog"  >
+            <div>
               Title:<br>
               <input class="input-title" type="text" id="newPostTitle" maxlength="16"></textarea><br>
               Content:<br>
@@ -366,15 +367,55 @@
                 <button class="btn btn-warning" role="button" onclick="hideCreateDialog('createPostDialog')">Cancel</button>
               </div>
             </div>
-          </dialog>
+          </dialog> -->
 
-          <dialog id="createCommentDialog" class="dialog">
-            <div>
-              <textarea rows="4" class="c" type="text" id="newComment" maxlength="255"></textarea>
-              <button href="#" class="btn btn-success" role="button" onclick="comment()" id="createCommentBtn" disabled="disabled">Comment</button>
-              <a class="btn btn-warning" role="button" onclick="hideCreateDialog('createCommentDialog')">Cancel</a>
-            </div>
-          </dialog>
+          <!-- Modal -->
+         <div class="modal"  id="createPostDialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+           <div class="modal-dialog" role="document">
+             <div class="modal-content">
+               <div class="modal-header">
+                 <h5 class="modal-title">New Post</h5>
+                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                   <span aria-hidden="true" onclick="hideCreateDialog('createPostDialog')">&times;</span>
+                 </button>
+               </div>
+               <div class="modal-body">
+                 <div>
+                   Title:<br>
+                   <input class="input-title" type="text" id="newPostTitle" maxlength="16"></textarea><br>
+                   Content:<br>
+                   <textarea rows="4" class="c" id="newPostComment" maxlength="255"></textarea>
+                </div>
+               </div>
+               <div class="modal-footer">
+                 <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="hideCreateDialog('createPostDialog')" >Close</button>
+                 <button type="button" class="btn btn-primary" onclick="createPost()">Save changes</button>
+               </div>
+             </div>
+           </div>
+         </div>
+
+         <div class="modal"  id="createCommentDialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+           <div class="modal-dialog" role="document">
+             <div class="modal-content">
+               <div class="modal-header">
+                 <h5 class="modal-title">Comment</h5>
+                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                   <span aria-hidden="true" onclick="hideCreateDialog('createCommentDialog')">&times;</span>
+                 </button>
+               </div>
+               <div class="modal-body">
+                 <div>
+                   <textarea rows="4" class="c" type="text" id="newComment" maxlength="255"></textarea>
+                </div>
+               </div>
+               <div class="modal-footer">
+                 <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="hideCreateDialog('createCommentDialog')" >Close</button>
+                 <button type="button" class="btn btn-primary" onclick="comment()">Save changes</button>
+               </div>
+             </div>
+           </div>
+         </div>
 
           <div class="row top">
             <a class="btn btn-success top-btn" role="button" onclick="showCreatePostDialog()">Create Post</a>
